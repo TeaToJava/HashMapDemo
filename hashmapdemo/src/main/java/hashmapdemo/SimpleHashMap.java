@@ -200,28 +200,32 @@ public class SimpleHashMap<K, V> implements Map<K, V> {
 			if (node == null) {
 				return null;
 			}
-			List<Node<K, V>> temp = new LinkedList<>();
+			Node<K, V> temp = null;
+			Node<K, V> first = null;
 			V value = null;
+
 			while (node != null) {
 				if (!node.getKey().equals(key)) {
-					temp.add(node);
+					if (temp != null) {
+						temp.setNext(node);
+					}else {
+						first = node;
+					}
+					temp = node;
 				}
 				value = node.getValue();
 				node = node.getNext();
 			}
-			node = temp.get(0);
-			node.setNext(null);
-			table[index] = node;
-			for (int i = 1; i < temp.size(); i++) {
-				node.setNext(temp.get(i));
-				node = node.getNext();
-			}
-			if (node == null) {
+
+			table[index] = first;
+
+			if (temp == first) {
 				size--;
 			}
 			return value;
 		}
 		return null;
+
 	}
 
 	/**
