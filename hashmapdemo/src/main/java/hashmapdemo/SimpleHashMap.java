@@ -254,7 +254,6 @@ public class SimpleHashMap<K, V> implements Map<K, V> {
 		private Node<K, V> next;
 
 		public Node(K key, V value) {
-			super();
 			this.key = key;
 			this.value = value;
 		}
