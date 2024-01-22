@@ -1,8 +1,11 @@
 package hashmapdemo;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import lombok.EqualsAndHashCode;
@@ -78,8 +81,8 @@ public class SimpleHashMap<K, V> implements Map<K, V> {
 	/**
 	 * Returns the quantity of buckets that are filled in.
 	 */
-	private long size() {
-		return Arrays.stream(table).filter(n -> n != null).count();
+	public int size() {
+		return size;
 	}
 
 	/**
@@ -100,13 +103,13 @@ public class SimpleHashMap<K, V> implements Map<K, V> {
 	@Override
 	public V put(K key, V value) {
 		int index = hash(key);
-		long size = size();
 		if (size != 0 && (double) size / table.length >= LOAD_FACTOR) {
 			resize();
 		}
 		Node<K, V> node = new Node<K, V>(key, value);
 		if (table[index] == null) {
 			table[index] = node;
+			size++;
 		} else {
 			Node<K, V> nodeFromTable = table[index];
 			while (nodeFromTable.getNext() != null) {
@@ -164,7 +167,7 @@ public class SimpleHashMap<K, V> implements Map<K, V> {
 	 */
 	@Override
 	public boolean isEmpty() {
-		return size() == 0 ? true : false;
+		return size == 0 ? true : false;
 	}
 
 	/**
@@ -172,7 +175,7 @@ public class SimpleHashMap<K, V> implements Map<K, V> {
 	 */
 	@Override
 	public boolean containsValue(V value) {
-		if (size() == 0) {
+		if (size == 0) {
 			return false;
 		}
 		for (int i = 0; i < table.length; i++) {
@@ -188,11 +191,11 @@ public class SimpleHashMap<K, V> implements Map<K, V> {
 	}
 
 	/**
-	 * Removes value by key and returns removed value.
+	 * Removes value by key and returns the last removed value found by key.
 	 */
 	@Override
 	public V remove(K key) {
-		if (size() > 0) {
+		if (size > 0) {
 			int index = hash(key);
 			if (index >= capacity) {
 				return null;
@@ -201,21 +204,31 @@ public class SimpleHashMap<K, V> implements Map<K, V> {
 			if (node == null) {
 				return null;
 			}
-			if (node.getKey().equals(key)) {
-				table[index] = null;
-				return node.getValue();
-			}
-			Node<K, V> next = node.getNext();
-			while (next != null) {
-				if (next.getKey().equals(key)) {
-					Node<K, V> temp = next;
-					node.setNext(next.getNext());
-					return temp.getValue();
+
+			List<Node<K, V>> temp = new LinkedList<>();
+			V value = null;
+			while(node!= null) {
+				if(!node.getKey().equals(key)) {
+					temp.add(node);
 				}
-				next = next.getNext();
+				value = node.getValue();
+				node = node.getNext();
 			}
-		}
-		return null;
+			node = temp.get(0);
+			node.setNext(null);
+			table[index] = node;
+			for(int i = 1; i< temp.size(); i++) {
+				node.setNext(temp.get(i));
+				node = node.getNext();
+			}
+
+			if(node == null) {
+				size--;
+			}
+			return value;
+
+		}return null;
+
 	}
 
 	/**
@@ -223,31 +236,13 @@ public class SimpleHashMap<K, V> implements Map<K, V> {
 	 */
 	@Override
 	public void clear() {
-		if (size() > 0) {
+		if (size > 0) {
 			for (int i = 0; i < table.length; i++) {
 				table[i] = null;
 			}
+			size = 0;
 		}
 	}
-
-	/**
-	 * Returns set of keys for all map elements.
-	 */
-	@Override
-	public Set<K> keySet() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/**
-	 * Returns collection of values for all map elements.
-	 */
-	@Override
-	public Collection<V> values() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 
 	/**
 	 * Node class that represents map element.

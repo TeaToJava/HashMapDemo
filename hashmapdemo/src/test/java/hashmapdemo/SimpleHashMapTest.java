@@ -37,8 +37,12 @@ public class SimpleHashMapTest {
 		map.put(19, 19);
 		map.put(20, 20);
 		map.put(28, 280);
-		map.remove(1);
-		assertFalse(map.containsKey(1));
+		map.put(44, 280);
+		map.put(28, 286);
+		map.remove(28);
+		assertFalse(map.containsKey(28));
+		assertTrue(map.containsKey(44));
+		assertTrue(map.size() == 5);
 	}
 
 	@Test
