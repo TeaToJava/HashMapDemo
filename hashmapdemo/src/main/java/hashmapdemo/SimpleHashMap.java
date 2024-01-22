@@ -1,12 +1,8 @@
 package hashmapdemo;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -204,11 +200,10 @@ public class SimpleHashMap<K, V> implements Map<K, V> {
 			if (node == null) {
 				return null;
 			}
-
 			List<Node<K, V>> temp = new LinkedList<>();
 			V value = null;
-			while(node!= null) {
-				if(!node.getKey().equals(key)) {
+			while (node != null) {
+				if (!node.getKey().equals(key)) {
 					temp.add(node);
 				}
 				value = node.getValue();
@@ -217,18 +212,16 @@ public class SimpleHashMap<K, V> implements Map<K, V> {
 			node = temp.get(0);
 			node.setNext(null);
 			table[index] = node;
-			for(int i = 1; i< temp.size(); i++) {
+			for (int i = 1; i < temp.size(); i++) {
 				node.setNext(temp.get(i));
 				node = node.getNext();
 			}
-
-			if(node == null) {
+			if (node == null) {
 				size--;
 			}
 			return value;
-
-		}return null;
-
+		}
+		return null;
 	}
 
 	/**

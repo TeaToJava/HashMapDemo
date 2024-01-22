@@ -1,7 +1,5 @@
 package hashmapdemo;
 
-import java.util.Collection;
-import java.util.Set;
 /**
  * Map interface that provides basic map operations
  * @author 
@@ -16,7 +14,6 @@ public interface Map<K, V> {
 	boolean containsValue(V value);
 	V remove(K key);
 	void clear();
-	Set<K> keySet();
-	Collection<V> values();
 	boolean isEmpty();
+	int size();
 }
