@@ -205,27 +205,32 @@ public class SimpleHashMap<K, V> implements Map<K, V> {
 			V value = null;
 
 			while (node != null) {
-				if (!node.getKey().equals(key)) {
-					if (temp != null) {
-						temp.setNext(node);
-					}else {
-						first = node;
+				K nodeKey = node.getKey();
+				V nodeValue = node.getValue();
+				if (!nodeKey.equals(key)) {
+					Node n = new Node(nodeKey, nodeValue);
+					if (temp == null) {
+						temp = n;
+						first = n;
+					} else {
+						if (first.getNext() == null) {
+							first.setNext(n);
+						}
+						temp.setNext(n);
+						temp = n;
 					}
-					temp = node;
+				} else {
+					value = nodeValue;
 				}
-				value = node.getValue();
 				node = node.getNext();
 			}
-
 			table[index] = first;
-
-			if (temp == first) {
+			if (temp == null) {
 				size--;
 			}
 			return value;
 		}
 		return null;
-
 	}
 
 	/**
